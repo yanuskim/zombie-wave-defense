@@ -2915,3 +2915,53 @@ dialog.dialog-fallback[open] {
   cursor: pointer;
   font-size: 0.82rem;
 }
+
+/* ── 기지 전술 지도 미리보기 ──────────────────────────── */
+.base-tac-grid {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  gap: 4px;
+  padding: 10px;
+  background: #060a07;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.1);
+  margin: 10px 0;
+}
+
+.tac-cell {
+  aspect-ratio: 1;
+  border-radius: 7px;
+  background: radial-gradient(ellipse at 38% 28%, rgba(55,185,105,0.55) 0%, rgba(10,55,30,0.96) 100%);
+  border: 1px solid rgba(55,155,85,0.5);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.11), inset 0 -1px 0 rgba(0,0,0,0.32);
+}
+
+.tac-cell.player {
+  background: radial-gradient(ellipse at 38% 28%, rgba(220,185,60,0.75) 0%, rgba(120,85,0,0.95) 100%);
+  border-color: rgba(220,185,60,0.85);
+  box-shadow: 0 0 8px rgba(220,185,60,0.45), inset 0 1px 0 rgba(255,255,255,0.2);
+}
+
+.tac-cell.explored {
+  background: radial-gradient(ellipse at 38% 28%, rgba(60,105,210,0.55) 0%, rgba(10,18,80,0.96) 100%);
+  border-color: rgba(70,120,225,0.5);
+}
+
+.tac-cell.enemy {
+  background: radial-gradient(ellipse at 38% 28%, rgba(195,55,55,0.6) 0%, rgba(80,8,8,0.96) 100%);
+  border-color: rgba(220,80,80,0.65);
+  box-shadow: 0 0 6px rgba(220,60,60,0.3);
+}
+
+.tac-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.tac-actions button {
+  flex: 1;
+  min-height: 48px;
+  font-size: 1rem;
+  font-weight: 900;
+}

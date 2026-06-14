@@ -1177,14 +1177,29 @@ function itemList(items) {
 }
 
 function renderBaseGridPreview() {
-  const fieldRows = Array.from({ length: 15 }, () => "<span></span>".repeat(8));
-  const baseRows = Array.from({ length: 3 }, () => "<i></i>".repeat(6));
+  const COLS = 9, ROWS = 9;
+  const explored = new Set(['5,4','6,4','8,4','6,5','7,5','8,5','6,6','7,6','8,6','5,7','6,7','7,7','8,7','5,8','6,8','7,8','8,8']);
+  const enemy = '8,8';
+  const player = '0,0';
+  let cells = '';
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      const k = `${c},${r}`;
+      const cls = k === player ? 'tac-cell player' : k === enemy ? 'tac-cell enemy' : explored.has(k) ? 'tac-cell explored' : 'tac-cell';
+      cells += `<div class="${cls}"></div>`;
+    }
+  }
   return `
-    <div class="base-grid-preview" aria-label="8x15 전장과 3x6 기지">
-      ${fieldRows.map((row) => `<div class="field-row">${row}</div>`).join("")}
-      ${baseRows.map((row) => `<div class="base-row">${row}</div>`).join("")}
+    <div class="base-tac-grid">${cells}</div>
+    <div class="tac-actions">
+      <button onclick="enterExplore()" class="primary">탐색</button>
     </div>
   `;
+}
+
+function enterExplore() {
+  if (!state) { alert('먼저 게임을 시작하세요 (로비 → 게임 시작)'); return; }
+  setScreen('combat');
 }
 
 const infoScreens = {
@@ -1245,15 +1260,11 @@ const infoScreens = {
     eyebrow: "Survivals Base · 2089",
     title: "기지",
     body: () => `
-      <div class="base-hero-img">
-        <img src="assets/images/base-camp.svg" alt="기지 전경" style="width:100%;max-height:300px;object-fit:cover;border-radius:10px;border:1px solid rgba(255,255,255,0.1);">
-      </div>
-      <p class="info-note" style="margin-top:14px">전장은 8×15칸, 기지 체력 기본값은 8. 바리케이드 제작 시 기지 압박 -1.</p>
+      <p class="info-note">기지 체력 <strong>${state ? state.base : 8}/8</strong> &nbsp;·&nbsp; 웨이브 <strong>${state ? state.wave : 0}</strong> &nbsp;·&nbsp; 전장 8×15칸</p>
       ${renderBaseGridPreview()}
-      <div class="info-grid">
-        <article><h3>제작 도구</h3><p>${recipes.map((recipe) => `${itemList(recipe.input)} → ${itemList(recipe.output)}`).join("<br>")}</p></article>
-        <article><h3>생존 게이지</h3><p>행동 1당 탈수 -3, 배고픔 -1. 둘 중 하나가 0이면 죽음 엔딩으로 이동한다.</p></article>
-        <article><h3>기지 현황</h3><p>현재 기지 체력: <strong>${state ? state.base : 8}/8</strong><br>웨이브: <strong>${state ? state.wave : 0}</strong></p></article>
+      <div class="info-grid" style="margin-top:12px">
+        <article><h3>기지 상태</h3><p>바리케이드 제작 시 기지 압박 -1. 배고픔·탈수 0이면 사망.</p></article>
+        <article><h3>탐색 방법</h3><p>탐색 버튼으로 작전 지도 진입. 이동·공격·제작·스킬을 수행.</p></article>
       </div>
     `,
   },
