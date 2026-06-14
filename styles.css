@@ -384,6 +384,7 @@ h3 {
   border: 1px solid rgba(255,255,255,0.12);
   border-radius: 8px;
   background: rgba(8,10,9,0.72);
+  margin-top: 120px;
 }
 
 .lobby-command button {
@@ -899,7 +900,7 @@ select {
 
 .shop-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(160px, 200px));
   gap: 16px;
   padding: 18px;
   border: 1px solid var(--line);
@@ -911,7 +912,9 @@ select {
   position: relative;
   display: grid;
   gap: 12px;
-  min-height: 260px;
+  min-height: 240px;
+  max-width: 220px;
+  width: 100%;
   padding: 16px;
   border: 1px solid rgba(255,255,255,0.12);
   border-radius: 8px;
@@ -2771,4 +2774,109 @@ dialog.dialog-fallback[open] {
   animation:
     base-shake 0.35s ease-out,
     base-flash 0.6s ease-out;
+}
+
+
+/* ── 하단 독 아이콘 ─────────────────────────────────────── */
+.bottom-dock button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font-size: 0.7rem;
+}
+.dock-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+/* ── 우편함 패널 ─────────────────────────────────────────── */
+.mail-panel h4 { margin: 0 0 10px; font-size: 1rem; }
+.mail-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.05);
+  margin-bottom: 8px;
+}
+.mail-item.claimed { opacity: 0.4; }
+.mail-info { flex: 1; }
+.mail-info strong { display: block; font-size: 0.85rem; }
+.mail-info p { font-size: 0.75rem; margin: 2px 0 0; opacity: 0.7; }
+.claimed-label { font-size: 0.75rem; color: #888; white-space: nowrap; }
+.no-reward { font-size: 0.75rem; opacity: 0.4; }
+
+/* ── 친구 패널 ───────────────────────────────────────────── */
+.friends-panel h4 { margin: 0 0 10px; font-size: 1rem; }
+.friend-add { display: flex; gap: 6px; margin-bottom: 12px; }
+.friend-add input {
+  flex: 1;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.08);
+  color: inherit;
+  font-size: 0.85rem;
+}
+.friend-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.05);
+  margin-bottom: 6px;
+}
+.friend-avatar {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: #2a5;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 0.9rem;
+  flex-shrink: 0;
+}
+.friend-item > div { flex: 1; }
+.friend-item strong { display: block; font-size: 0.85rem; }
+.friend-item small { font-size: 0.72rem; opacity: 0.7; }
+.my-code {
+  margin-top: 14px;
+  padding: 10px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.04);
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 0.8rem;
+}
+.my-code strong { font-size: 1rem; letter-spacing: 1px; }
+.empty-msg { font-size: 0.82rem; opacity: 0.6; line-height: 1.6; }
+
+/* ── 설정 패널 ───────────────────────────────────────────── */
+.settings-panel h4 { margin: 0 0 12px; font-size: 1rem; }
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  gap: 12px;
+  font-size: 0.85rem;
+}
+.setting-row label { opacity: 0.8; }
+.setting-row select {
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: inherit;
+  font-size: 0.82rem;
+}
+.danger-btn {
+  background: #c0392b !important;
+  color: #fff !important;
+  border: none;
+  padding: 4px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.82rem;
 }

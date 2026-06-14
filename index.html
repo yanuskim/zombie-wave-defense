@@ -7,7 +7,7 @@
     <meta name="description" content="좀비 웨이브 디펜스 테스트 웹앱">
     <title>좀비 웨이브 디펜스</title>
     <link rel="manifest" href="manifest.webmanifest">
-    <link rel="stylesheet" href="styles.css?v=zwd14">
+    <link rel="stylesheet" href="styles.css?v=zwd16">
   </head>
   <body>
     <main class="app title-mode">
@@ -50,7 +50,6 @@
 
       <section class="game-layout" aria-label="메인 게임 화면">
         <aside class="side-rail left-rail" aria-label="좌측 메뉴">
-          <button data-screen="shop" type="button"><span class="menu-icon">▤</span><span>상점</span><small>구매</small></button>
           <button data-screen="achievements" type="button"><span class="menu-icon">★</span><span>업적</span><small>보상</small></button>
           <button data-screen="ranking" type="button"><span class="menu-icon">▲</span><span>랭킹</span><small>순위</small></button>
         </aside>
@@ -336,21 +335,21 @@
         </div>
 
         <aside class="side-rail right-rail" aria-label="우측 메뉴">
-          <button data-lobby="mail" type="button"><span>우편함</span><small>보상</small></button>
-          <button data-lobby="friends" type="button"><span>친구</span><small>팀</small></button>
-          <button data-screen="quests" type="button"><span>퀘스트</span><small>일일</small></button>
-          <button data-screen="attendance" type="button"><span>출석</span><small>보상</small></button>
-          <button data-lobby="settings" type="button"><span>설정</span><small>옵션</small></button>
-          <button data-lobby="report" type="button"><span>신고</span><small>문의</small></button>
+          <button data-lobby="mail" type="button"><span class="menu-icon">✉️</span><span>우편함</span><small>보상</small></button>
+          <button data-lobby="friends" type="button"><span class="menu-icon">👥</span><span>친구</span><small>팀</small></button>
+          <button data-screen="quests" type="button"><span class="menu-icon">📋</span><span>퀘스트</span><small>일일</small></button>
+          <button data-screen="attendance" type="button"><span class="menu-icon">📅</span><span>출석</span><small>보상</small></button>
+          <button data-lobby="settings" type="button"><span class="menu-icon">⚙️</span><span>설정</span><small>옵션</small></button>
+          <button data-lobby="report" type="button"><span class="menu-icon">🚨</span><span>신고</span><small>문의</small></button>
         </aside>
       </section>
 
       <nav class="bottom-dock" aria-label="하단 주요 탭">
-        <button data-screen="shop" type="button">상점</button>
-        <button data-screen="jobs" type="button">직업</button>
-        <button class="active" data-screen="combat" type="button">로비</button>
-        <button data-screen="relic" type="button">유물</button>
-        <button data-screen="base" type="button">기지</button>
+        <button data-screen="shop" type="button"><span class="dock-icon">🛒</span><span>상점</span></button>
+        <button data-screen="jobs" type="button"><span class="dock-icon">🧬</span><span>직업</span></button>
+        <button class="active" data-screen="combat" type="button"><span class="dock-icon">🏠</span><span>로비</span></button>
+        <button data-screen="relic" type="button"><span class="dock-icon">💎</span><span>유물</span></button>
+        <button data-screen="base" type="button"><span class="dock-icon">🛡️</span><span>기지</span></button>
       </nav>
 
       <dialog id="endingDialog">
@@ -395,7 +394,7 @@
 
       <div id="resultToast" class="result-toast" hidden aria-live="polite"></div>
     </main>
-    <script src="game.js?v=zwd14"></script>
+    <script src="game.js?v=zwd16"></script>
     <script>
       if ("serviceWorker" in navigator && location.protocol !== "file:") {
         navigator.serviceWorker.register("sw.js").catch(() => {});

@@ -1,9 +1,9 @@
-const CACHE_NAME = "zwd-test-app-v18";
+const CACHE_NAME = "zwd-test-app-v20";
 const ASSETS = [
   "./",
   "./index.html",
-  "./styles.css?v=zwd14",
-  "./game.js?v=zwd14",
+  "./styles.css?v=zwd16",
+  "./game.js?v=zwd16",
   "./manifest.webmanifest",
   "./icon.svg",
   "./assets/images/hero-base.png",

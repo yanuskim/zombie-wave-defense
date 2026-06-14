@@ -293,6 +293,10 @@ const meta = {
     beast: [],
   },
   achievements: new Set(),
+  mailbox: null,
+  friends: [],
+  playerCode: "",
+  musicOn: true,
 };
 
 const state = {
@@ -1238,14 +1242,18 @@ const infoScreens = {
     `,
   },
   base: {
-    eyebrow: "Base Map",
+    eyebrow: "Survivals Base · 2089",
     title: "기지",
     body: () => `
-      <p class="info-note">전장은 8x15칸, 마지막 가로 중심에는 3x6 기지가 붙는다. 기지 체력 기본값은 8이다.</p>
+      <div class="base-hero-img">
+        <img src="assets/images/base-camp.svg" alt="기지 전경" style="width:100%;max-height:300px;object-fit:cover;border-radius:10px;border:1px solid rgba(255,255,255,0.1);">
+      </div>
+      <p class="info-note" style="margin-top:14px">전장은 8×15칸, 기지 체력 기본값은 8. 바리케이드 제작 시 기지 압박 -1.</p>
       ${renderBaseGridPreview()}
       <div class="info-grid">
-        <article><h3>제작 도구</h3><p>${recipes.map((recipe) => `${itemList(recipe.input)} -> ${itemList(recipe.output)}`).join("<br>")}</p></article>
+        <article><h3>제작 도구</h3><p>${recipes.map((recipe) => `${itemList(recipe.input)} → ${itemList(recipe.output)}`).join("<br>")}</p></article>
         <article><h3>생존 게이지</h3><p>행동 1당 탈수 -3, 배고픔 -1. 둘 중 하나가 0이면 죽음 엔딩으로 이동한다.</p></article>
+        <article><h3>기지 현황</h3><p>현재 기지 체력: <strong>${state ? state.base : 8}/8</strong><br>웨이브: <strong>${state ? state.wave : 0}</strong></p></article>
       </div>
     `,
   },
@@ -1926,11 +1934,11 @@ function endTurn() {
       if (!player.beastAteThisTurn) {
         player.beastSkipTurnCount = (player.beastSkipTurnCount || 0) + 1;
         if (player.beastSkipTurnCount >= 2) {
-          // 2턴 연속 못 먹으면 사망
+          // 2턴(2턴 포함)까지 먹지 않으면 사망
           player.hp = 0;
-          log(`⚠️ ${player.name}(짐승인간)이 너무 오래 먹지 못해 굶주림으로 쓰러졌다!`);
+          log(`💀 ${player.name}(짐승인간)이 2턴 안에 좀비를 먹지 못해 굶주림으로 쓰러졌다!`);
         } else {
-          log(`⚠️ ${player.name}(짐승인간)이 이 턴에 먹지 않았다. 다음 턴에는 반드시 좀비를 처치하고 먹어야 한다!`);
+          log(`⚠️ ${player.name}(짐승인간) — 경고: 2턴 안(2턴 포함)에 반드시 좀비를 처치하고 먹어야 살 수 있다!`);
         }
       } else {
         player.beastSkipTurnCount = 0;
@@ -2034,14 +2042,139 @@ function showEnding(title, body) {
 }
 
 function setLobbyPanel(kind) {
+  if (kind === "mail") {
+    const mails = meta.mailbox && meta.mailbox.length > 0 ? meta.mailbox : [
+      { id: "welcome", title: "환영합니다!", body: "좀비 웨이브 디펜스에 오신 것을 환영합니다. 코인 300개를 드립니다.", reward: { coins: 300 }, claimed: false },
+      { id: "patch_note", title: "[공지] 좀비 디펜스 6 업데이트", body: "농부·상인·짐승인간 직업과 석재·광업·제련 시스템이 추가되었습니다.", reward: null, claimed: false },
+    ];
+    if (!meta.mailbox) { meta.mailbox = mails; saveMeta(); }
+    const items = meta.mailbox.map((m, i) => `
+      <div class="mail-item ${m.claimed ? 'claimed' : ''}">
+        <div class="mail-info">
+          <strong>${m.title}</strong>
+          <p>${m.body}</p>
+        </div>
+        ${m.reward && !m.claimed
+          ? `<button onclick="claimMail(${i})" type="button" class="primary">수령</button>`
+          : m.claimed ? `<span class="claimed-label">수령 완료</span>` : `<span class="no-reward">-</span>`}
+      </div>`).join('');
+    els.lobbyPanel.innerHTML = `<div class="mail-panel"><h4>📬 우편함</h4>${items || '<p>우편이 없습니다.</p>'}</div>`;
+    return;
+  }
+
+  if (kind === "friends") {
+    const friends = meta.friends || [];
+    const friendItems = friends.length > 0
+      ? friends.map(f => `<div class="friend-item"><span class="friend-avatar">${f.name[0]}</span><div><strong>${f.name}</strong><small>${f.online ? '🟢 온라인' : '⚫ 오프라인'}</small></div><button type="button">초대</button></div>`).join('')
+      : '<p class="empty-msg">아직 친구가 없습니다.<br>친구 코드를 공유해 팀을 구성하세요.</p>';
+    els.lobbyPanel.innerHTML = `
+      <div class="friends-panel">
+        <h4>👥 친구</h4>
+        <div class="friend-add">
+          <input id="friendCodeInput" type="text" placeholder="친구 코드 입력" maxlength="12">
+          <button onclick="addFriend()" type="button">추가</button>
+        </div>
+        <div class="friend-list">${friendItems}</div>
+        <div class="my-code"><small>내 친구 코드</small><strong>ZWD-${(meta.playerCode || (meta.playerCode = Math.random().toString(36).slice(2,8).toUpperCase(), saveMeta(), meta.playerCode))}</strong></div>
+      </div>`;
+    return;
+  }
+
+  if (kind === "settings") {
+    const musicOn = meta.musicOn !== false;
+    els.lobbyPanel.innerHTML = `
+      <div class="settings-panel">
+        <h4>⚙️ 설정</h4>
+        <div class="setting-row">
+          <label>배경음악</label>
+          <button onclick="toggleMusicSetting()" type="button" id="musicSettingBtn">${musicOn ? '켜짐 🔊' : '꺼짐 🔇'}</button>
+        </div>
+        <div class="setting-row">
+          <label>언어</label>
+          <select onchange="setLanguage(this.value)">
+            <option value="ko" selected>한국어</option>
+            <option value="en">English (준비중)</option>
+          </select>
+        </div>
+        <div class="setting-row">
+          <label>저장 데이터 초기화</label>
+          <button onclick="confirmResetSave()" type="button" class="danger-btn">초기화</button>
+        </div>
+        <div class="setting-row">
+          <label>버전</label>
+          <span>좀비 디펜스 6 · v0.3.0</span>
+        </div>
+      </div>`;
+    return;
+  }
+
+  if (kind === "report") {
+    els.lobbyPanel.innerHTML = `
+      <div class="settings-panel">
+        <h4>🚨 신고 / 문의</h4>
+        <p>버그나 불편 사항은 아래 이메일로 보내주세요.</p>
+        <p><strong>yanus0820@gmail.com</strong></p>
+        <div class="setting-row" style="margin-top:12px">
+          <label>신고 유형</label>
+          <select>
+            <option>버그 신고</option>
+            <option>비정상 플레이</option>
+            <option>불편 사항</option>
+            <option>기타</option>
+          </select>
+        </div>
+        <button type="button" onclick="alert('신고가 접수되었습니다. 감사합니다!')" style="margin-top:8px">신고 접수</button>
+      </div>`;
+    return;
+  }
+
+  // 기본 fallback
   const content = {
-    mail: ["우편함", "출석 보상, 이벤트 보상, 점검 보상을 받는 곳."],
-    friends: ["친구", "친구와 대화하고 팀 플레이를 시작하는 곳. 현재 초안은 로컬 핫시트로 대체."],
-    settings: ["설정", "사운드, 계정 전환, 언어, 도움말, 문의, 계정 삭제 메뉴가 들어갈 위치."],
-    report: ["신고", "비정상 플레이, 버그, 불편 사항을 신고하는 곳."],
     shop: ["상점", "코인, 보석, 유물, 직업 카드, 광고 제거 상품을 구매하는 곳."],
-  }[kind];
+  }[kind] || [kind, "준비 중입니다."];
   els.lobbyPanel.innerHTML = `<article><strong>${content[0]}</strong><p>${content[1]}</p></article>`;
+}
+
+function claimMail(index) {
+  const mail = meta.mailbox[index];
+  if (!mail || mail.claimed) return;
+  if (mail.reward) {
+    if (mail.reward.coins) { meta.coins += mail.reward.coins; log(`우편함: 코인 ${mail.reward.coins}개 수령!`); }
+    if (mail.reward.gems)  { meta.gems  += mail.reward.gems;  log(`우편함: 보석 ${mail.reward.gems}개 수령!`); }
+  }
+  mail.claimed = true;
+  saveMeta();
+  render();
+  setLobbyPanel("mail");
+}
+
+function addFriend() {
+  const input = document.getElementById("friendCodeInput");
+  const code = (input?.value || "").trim().toUpperCase();
+  if (!code || code.length < 4) { alert("올바른 친구 코드를 입력해주세요."); return; }
+  if (!meta.friends) meta.friends = [];
+  if (meta.friends.find(f => f.code === code)) { alert("이미 친구 목록에 있습니다."); return; }
+  meta.friends.push({ name: "생존자-" + code.slice(-3), code, online: false });
+  saveMeta();
+  setLobbyPanel("friends");
+}
+
+function toggleMusicSetting() {
+  meta.musicOn = meta.musicOn === false ? true : false;
+  saveMeta();
+  const btn = document.getElementById("musicSettingBtn");
+  if (btn) btn.textContent = meta.musicOn ? "켜짐 🔊" : "꺼짐 🔇";
+}
+
+function setLanguage(lang) {
+  if (lang !== "ko") alert("영어 지원은 준비 중입니다.");
+}
+
+function confirmResetSave() {
+  if (confirm("모든 저장 데이터(코인·보석·카드·업적)를 초기화합니다. 계속할까요?")) {
+    localStorage.clear();
+    location.reload();
+  }
 }
 
 function triggerBaseHitEffect() {
@@ -2207,4 +2340,4 @@ window.setInterval(() => {
 loadMeta();
 setLobbyPanel("mail");
 resetGame(false);
-setScreen("combat");
+setScreen("base");
