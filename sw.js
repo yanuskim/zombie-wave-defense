@@ -1,4 +1,4 @@
-const CACHE_NAME = "zwd-test-app-v20";
+const CACHE_NAME = "zwd-test-app-v21";
 const ASSETS = [
   "./",
   "./index.html",

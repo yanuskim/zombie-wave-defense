@@ -384,7 +384,7 @@ h3 {
   border: 1px solid rgba(255,255,255,0.12);
   border-radius: 8px;
   background: rgba(8,10,9,0.72);
-  margin-top: 120px;
+  margin-top: 0;
 }
 
 .lobby-command button {
@@ -2024,7 +2024,42 @@ dialog.dialog-fallback[open] {
     display: grid;
     grid-template-rows: auto minmax(0, 1fr) auto;
     gap: 6px;
-    overflow: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* 로비 히어로: 버튼이 보일 높이만 확보, 자연스럽게 늘어나도록 */
+  .hero.lobby-combat {
+    height: auto;
+    min-height: 0;
+    align-items: start;
+  }
+
+  /* 로비 히어로 헤더 텍스트: 모바일에서 숨김 */
+  .hero.lobby-combat .hero-copy {
+    display: none;
+  }
+
+  /* 로비 커맨드: 전체 너비 차지 */
+  .hero.lobby-combat .lobby-command {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    padding: 10px;
+    align-items: stretch;
+  }
+
+  .hero.lobby-combat .lobby-command button {
+    flex: 1;
+    min-height: 52px;
+    font-size: 0.8rem;
+  }
+
+  /* 로비 그리드: 스크롤 가능 */
+  .lobby-grid {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .side-rail {
