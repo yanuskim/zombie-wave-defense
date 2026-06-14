@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#121413">
+    <meta name="description" content="좀비 웨이브 디펜스 테스트 웹앱">
+    <title>좀비 웨이브 디펜스</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="stylesheet" href="styles.css?v=zwd14">
+  </head>
+  <body>
+    <main class="app title-mode">
+      <section class="title-screen" id="titleScreen" aria-label="타이틀 화면">
+        <div class="title-bg">
+          <p class="eyebrow">Survivals / 2089</p>
+          <h1>좀비 웨이브 디펜스</h1>
+          <p>기지를 세우고, 단서를 모으고, 죠나바이러스의 진실을 파헤쳐라.</p>
+          <button id="enterLobby" class="primary title-start" type="button">터치해서 시작</button>
+        </div>
+      </section>
+
+      <section class="topbar" aria-label="로비 메뉴">
+        <div class="profile-chip" aria-label="프로필">
+          <span class="profile-avatar">S</span>
+          <div>
+            <strong>서바이벌스</strong>
+            <small>Lv.1 시민</small>
+          </div>
+        </div>
+        <div class="brand">
+          <span class="mark">ZWD</span>
+          <div>
+            <h1>좀비 웨이브 디펜스</h1>
+            <p>Survivals 기지 작전 초안</p>
+          </div>
+        </div>
+        <nav class="lobby-nav" aria-label="로비 기능">
+          <button data-screen="attendance" type="button"><span class="menu-icon">▣</span>출석</button>
+          <button data-lobby="settings" type="button"><span class="menu-icon">⚙</span>설정</button>
+          <button data-lobby="report" type="button"><span class="menu-icon">!</span>신고</button>
+        </nav>
+        <div class="resource-strip" aria-label="상단 자원">
+          <span><span class="menu-icon">◎</span>코인 <strong id="topCoins">1200</strong></span>
+          <span><span class="menu-icon">◇</span>보석 <strong id="topGems">120</strong></span>
+          <button id="musicToggle" type="button"><span class="menu-icon">♪</span>음악</button>
+        </div>
+        <p id="bootStatus" class="boot-status">JS 미실행: 파일 미리보기가 아니라 Safari/브라우저로 열어야 버튼이 동작합니다.</p>
+      </section>
+
+      <section class="game-layout" aria-label="메인 게임 화면">
+        <aside class="side-rail left-rail" aria-label="좌측 메뉴">
+          <button data-screen="shop" type="button"><span class="menu-icon">▤</span><span>상점</span><small>구매</small></button>
+          <button data-screen="achievements" type="button"><span class="menu-icon">★</span><span>업적</span><small>보상</small></button>
+          <button data-screen="ranking" type="button"><span class="menu-icon">▲</span><span>랭킹</span><small>순위</small></button>
+        </aside>
+
+        <div class="center-stack">
+          <section class="hero combat-screen lobby-combat" aria-label="게임 시작">
+            <div class="hero-copy">
+              <p class="eyebrow">2089.12.25 / 엔터톤 19주년 행사 이후</p>
+              <h2>로비</h2>
+              <p>출전 준비에서 모드, 직업 카드, 유물을 정한 뒤 작전을 시작한다.</p>
+            </div>
+            <div class="lobby-command">
+              <button id="openPrep" class="primary" type="button">게임 시작</button>
+              <button data-screen="jobs" type="button">직업 도감</button>
+              <button data-screen="relic" type="button">유물 관리</button>
+            </div>
+          </section>
+
+      <section class="prep-screen app-screen" id="prepScreen" aria-label="출전 준비" hidden>
+        <div class="prep-hero">
+          <div>
+            <p class="eyebrow">Operation Ready</p>
+            <h2>출전 준비</h2>
+            <p>작전에 투입할 난이도, 팀 편성, 직업 카드, 유물 구성을 확인한다. 실제 작전 지도는 이 화면에서 시작한 뒤에만 열린다.</p>
+          </div>
+          <button data-screen="combat" type="button">로비로</button>
+        </div>
+        <div class="prep-grid">
+          <div class="start-panel">
+            <label for="difficulty">난이도</label>
+            <select id="difficulty">
+              <option value="easy">이지모드</option>
+            </select>
+            <label for="mode">모드</label>
+            <select id="mode">
+              <option value="solo">솔로 플레이</option>
+              <option value="team">팀 플레이</option>
+            </select>
+            <label for="teamSize">팀 인원</label>
+            <select id="teamSize">
+              <option value="2">2명</option>
+              <option value="3">3명</option>
+              <option value="4">4명</option>
+            </select>
+            <label for="job">직업 카드</label>
+            <select id="job">
+              <option value="citizen">시민</option>
+            </select>
+            <button id="startGame" class="primary" type="button">작전 시작</button>
+          </div>
+          <div class="prep-card prep-jobs">
+            <div class="prep-card-head">
+              <h3>직업 카드</h3>
+              <span>시민 기본 지급</span>
+            </div>
+            <div id="prepJobCards" class="prep-job-cards"></div>
+          </div>
+          <div class="prep-card prep-relic-card">
+            <div class="prep-card-head">
+              <h3>유물 장착</h3>
+              <span id="prepRelics">0/4</span>
+            </div>
+            <div id="prepRelicSlots" class="prep-relic-slots"></div>
+          </div>
+          <div class="prep-card prep-brief-card">
+            <div class="prep-card-head">
+              <h3>작전 브리핑</h3>
+              <span id="prepBriefing">오전 7시 토의</span>
+            </div>
+            <div id="prepRoster" class="prep-roster"></div>
+            <p>토의를 건너뛰면 오전 9시부터 행동을 소비한다. 두 번째 날부터 이지모드 웨이브가 시작된다.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="shop-screen app-screen" id="shopScreen" aria-label="상점 화면" hidden>
+        <div class="shop-hero">
+          <div>
+            <p class="eyebrow">Survivals Black Market</p>
+            <h2>상점</h2>
+            <p>생존에 필요한 자원, 초대장, 유물 조각을 구매한다. 상품은 일일 상품 영역과 고정 패키지 영역으로 나뉜다.</p>
+          </div>
+          <div class="shop-timer">
+            <span>일일 상품 갱신</span>
+            <strong id="shopTimer">12시간 00분</strong>
+          </div>
+        </div>
+        <div class="shop-tabs">
+          <button class="active" data-shop-tab="daily" type="button">일일 상품</button>
+          <button data-shop-tab="coins" type="button">코인</button>
+          <button data-shop-tab="jobs" type="button">직업</button>
+          <button data-shop-tab="relics" type="button">유물</button>
+          <button data-shop-tab="utility" type="button">편의</button>
+        </div>
+        <div id="shopGrid" class="shop-grid"></div>
+        <div class="shop-reset">
+          <h3>초기화</h3>
+          <button id="adReset" type="button">광고 초기화 2/2</button>
+          <button id="coinReset" type="button">코인 초기화 1000 · 3/3</button>
+        </div>
+      </section>
+
+      <section class="relic-screen app-screen" id="relicScreen" aria-label="유물 화면" hidden>
+        <div class="relic-hero">
+          <div>
+            <p class="eyebrow">Survivals Relic Archive</p>
+            <h2>유물</h2>
+            <p>보유 유물을 확인하고 조각을 모아 강화한다. 유물은 탐험, 연구, 기지 방어 효율에 영향을 준다.</p>
+          </div>
+          <div class="relic-summary">
+            <span>총 유물 레벨</span>
+            <strong id="relicTotalLevel">0</strong>
+          </div>
+        </div>
+        <div class="relic-toolbar">
+          <button class="active" data-relic-filter="all" type="button">전체</button>
+          <button data-relic-filter="upgradable" type="button">강화 가능</button>
+          <button data-relic-filter="전투" type="button">전투</button>
+          <button data-relic-filter="탐험" type="button">탐험</button>
+          <button data-relic-filter="연구" type="button">연구</button>
+        </div>
+        <div id="relicGrid" class="relic-grid"></div>
+      </section>
+
+      <section class="info-screen app-screen" id="infoScreen" aria-label="정보 화면" hidden>
+        <div class="info-head">
+          <div>
+            <p class="eyebrow" id="infoEyebrow">Survivals Archive</p>
+            <h2 id="infoTitle">정보</h2>
+          </div>
+          <button data-screen="combat" type="button">로비로</button>
+        </div>
+        <div id="infoContent" class="info-content"></div>
+      </section>
+
+      <section class="lobby-grid combat-screen lobby-combat" aria-label="로비 확장 기능">
+        <div class="panel lobby-panel">
+          <div class="panel-head">
+            <h3>직업 카드 강화</h3>
+            <span id="wallet">코인 1200 / 보석 120</span>
+          </div>
+          <div id="upgradeList" class="upgrade-list"></div>
+        </div>
+        <div class="panel lobby-panel">
+          <h3>로비 기능</h3>
+          <div id="lobbyPanel" class="lobby-content"></div>
+        </div>
+        <div class="panel lobby-panel">
+          <h3>업적</h3>
+          <ul id="achievements" class="compact-list"></ul>
+        </div>
+      </section>
+
+      <section class="game-shell combat-screen play-combat" aria-label="인게임">
+        <section class="mobile-hud" aria-label="모바일 인게임 HUD">
+          <div class="mobile-hud-main">
+            <div>
+              <span id="mobileDay">1일차</span>
+              <strong id="mobileClock">오전 7시</strong>
+            </div>
+            <div>
+              <span id="mobilePhase">토의</span>
+              <strong id="mobilePlayer">P1 시민</strong>
+            </div>
+            <div>
+              <span>행동</span>
+              <strong id="mobileActions">6</strong>
+            </div>
+          </div>
+          <div class="mobile-hud-bars">
+            <div>
+              <span>체력 <b id="mobileHpText">100/100</b></span>
+              <i><em id="mobileHpBar"></em></i>
+            </div>
+            <div>
+              <span>기지 <b id="mobileBaseText">8/8</b></span>
+              <i><em id="mobileBaseBar"></em></i>
+            </div>
+          </div>
+          <div class="mobile-hud-tools">
+            <button id="mobileInventory" type="button">가방</button>
+            <button id="mobileEndTurn" type="button">턴 종료</button>
+          </div>
+        </section>
+
+        <aside class="panel status-panel">
+          <h3>상태</h3>
+          <dl class="stats">
+            <div><dt>날짜</dt><dd id="day">1일차</dd></div>
+            <div><dt>시간</dt><dd id="clock">오전 7시</dd></div>
+            <div><dt>페이즈</dt><dd id="phase">토의</dd></div>
+            <div><dt>웨이브</dt><dd id="wave">1</dd></div>
+            <div><dt>현재 플레이어</dt><dd id="currentPlayer">P1</dd></div>
+            <div><dt>행동력</dt><dd id="actions">6</dd></div>
+            <div><dt>체력</dt><dd id="hp">100</dd></div>
+            <div><dt>기지</dt><dd id="base">100</dd></div>
+            <div><dt>위치</dt><dd id="location">기지</dd></div>
+            <div><dt>좀비</dt><dd id="zombieType">감염자</dd></div>
+          </dl>
+          <div class="meter-group">
+            <label>백신 연구 <span id="vaccineText">0%</span></label>
+            <div class="meter"><span id="vaccineMeter"></span></div>
+          </div>
+          <div class="meter-group">
+            <label>데드저스티스 신뢰 <span id="justiceText">0</span></label>
+            <div class="meter"><span id="justiceMeter"></span></div>
+          </div>
+          <div class="meter-group">
+            <label>탈수 <span id="thirstText">100</span></label>
+            <div class="meter"><span id="thirstMeter"></span></div>
+          </div>
+          <div class="meter-group">
+            <label>배고픔 <span id="hungerText">100</span></label>
+            <div class="meter"><span id="hungerMeter"></span></div>
+          </div>
+        </aside>
+
+        <section class="map-panel">
+          <div class="map-head">
+            <h3>작전 지도</h3>
+            <div class="map-actions">
+              <button id="openInventory" type="button">인벤토리</button>
+              <button id="endTurn" type="button">턴 종료</button>
+            </div>
+          </div>
+          <div id="discussionPanel" class="discussion-panel">
+            <div class="discussion-head">
+              <div>
+                <strong>오전 7시 토의 시간</strong>
+                <p>90초 동안 역할을 나누고 오늘의 조사, 제작, 방어 계획을 정한다.</p>
+              </div>
+              <span id="discussionTimer">90</span>
+            </div>
+            <div id="discussionRoster" class="discussion-roster"></div>
+            <div class="discussion-actions">
+              <button id="skipDiscussion" class="primary" type="button">모두 토의 건너뛰기</button>
+            </div>
+          </div>
+          <div id="craftGuide" class="craft-guide" hidden></div>
+          <div id="mapGrid" class="map-grid" aria-label="작전 지도"></div>
+        </section>
+
+        <aside class="panel inventory-panel">
+          <h3>자원</h3>
+          <ul class="resources">
+            <li>식량 <strong id="food">8</strong></li>
+            <li>물 <strong id="water">8</strong></li>
+            <li>고철 <strong id="scrap">3</strong></li>
+            <li>의약품 <strong id="meds">2</strong></li>
+            <li>데이터 <strong id="data">0</strong></li>
+            <li>무기 <strong id="weapon">0</strong></li>
+          </ul>
+          <h3>인벤토리 <span id="inventoryCount">0/500</span></h3>
+          <div id="inventoryMini" class="inventory-mini"></div>
+          <h3>팀</h3>
+          <div id="partyList" class="party-list"></div>
+          <h3>직업 카드</h3>
+          <div id="cardInfo" class="card-info"></div>
+        </aside>
+      </section>
+
+      <section class="action-band combat-screen play-combat" aria-label="행동">
+        <button data-action="move" type="button">탐색</button>
+        <button data-action="attack" type="button">공격</button>
+        <button data-action="craft" type="button">제작</button>
+        <button data-action="heal" type="button">치료</button>
+        <button data-action="research" type="button">연구</button>
+        <button data-action="investigate" type="button">조사</button>
+        <button data-action="interact" type="button">상호작용</button>
+        <button data-action="expedition" type="button">탐험</button>
+      </section>
+
+      <section class="lower-grid combat-screen play-combat">
+        <div class="panel">
+          <h3>작전 기록</h3>
+          <ol id="log" class="log"></ol>
+        </div>
+        <div class="panel">
+          <h3>서사 도감</h3>
+          <ul id="clues" class="clues codex-list"></ul>
+        </div>
+      </section>
+        </div>
+
+        <aside class="side-rail right-rail" aria-label="우측 메뉴">
+          <button data-lobby="mail" type="button"><span>우편함</span><small>보상</small></button>
+          <button data-lobby="friends" type="button"><span>친구</span><small>팀</small></button>
+          <button data-screen="quests" type="button"><span>퀘스트</span><small>일일</small></button>
+          <button data-screen="attendance" type="button"><span>출석</span><small>보상</small></button>
+          <button data-lobby="settings" type="button"><span>설정</span><small>옵션</small></button>
+          <button data-lobby="report" type="button"><span>신고</span><small>문의</small></button>
+        </aside>
+      </section>
+
+      <nav class="bottom-dock" aria-label="하단 주요 탭">
+        <button data-screen="shop" type="button">상점</button>
+        <button data-screen="jobs" type="button">직업</button>
+        <button class="active" data-screen="combat" type="button">로비</button>
+        <button data-screen="relic" type="button">유물</button>
+        <button data-screen="base" type="button">기지</button>
+      </nav>
+
+      <dialog id="endingDialog">
+        <h2 id="endingTitle"></h2>
+        <p id="endingBody"></p>
+        <button id="restart" class="primary" type="button">다시 시작</button>
+      </dialog>
+
+      <dialog id="rewardDialog" class="reward-dialog">
+        <h2>보상</h2>
+        <div id="rewardIcon" class="reward-icon"></div>
+        <p id="rewardBody"></p>
+        <button id="rewardClose" class="primary" type="button">확인</button>
+      </dialog>
+
+      <dialog id="inventoryDialog" class="inventory-dialog">
+        <h2>인벤토리</h2>
+        <div id="inventoryFull" class="inventory-full"></div>
+        <button id="inventoryClose" class="primary" type="button">닫기</button>
+      </dialog>
+
+      <section id="operationOverlay" class="operation-overlay" hidden aria-live="polite">
+        <div>
+          <p class="eyebrow">Operation Launch</p>
+          <h2>작전 투입 중</h2>
+          <p id="operationOverlayText">서바이벌스가 기지 방어 작전을 준비하고 있다.</p>
+          <div class="launch-bar"><span></span></div>
+        </div>
+      </section>
+
+      <section id="actionFeedback" class="action-feedback" hidden aria-live="polite">
+        <div>
+          <span id="actionIcon">⌖</span>
+          <div>
+            <strong id="actionTitle">행동 처리</strong>
+            <p id="actionBody">작전을 수행하고 있다.</p>
+            <small id="actionTime">3초</small>
+          </div>
+          <i><em id="actionProgress"></em></i>
+        </div>
+      </section>
+
+      <div id="resultToast" class="result-toast" hidden aria-live="polite"></div>
+    </main>
+    <script src="game.js?v=zwd14"></script>
+    <script>
+      if ("serviceWorker" in navigator && location.protocol !== "file:") {
+        navigator.serviceWorker.register("sw.js").catch(() => {});
+      }
+    </script>
+  </body>
+</html>

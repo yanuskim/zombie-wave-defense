@@ -1,0 +1,17 @@
+{
+  "name": "좀비 웨이브 디펜스",
+  "short_name": "ZWD",
+  "description": "좀비 웨이브 디펜스 테스트 웹앱",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#121413",
+  "theme_color": "#121413",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

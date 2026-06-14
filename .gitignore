@@ -1,0 +1,4 @@
+.DS_Store
+node_modules/
+dist/
+이미지 작업/
